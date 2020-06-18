@@ -114,6 +114,8 @@ class ESL extends EventEmitter {
     logger = utils.getLogger(false);
  
     failedReconnectAttempts = 0;
+    maxReconnectAttempts = Infinity;
+    reconnectInterval = 5000;
 
     constructor(connectOptions: ConnectOptions = { host: '127.0.0.1', port: 8021, password: 'ClueCon',
         reconnectOptions: { reconnect: false, interval: 3000, maxAttemtps: Infinity }}) {
@@ -124,8 +126,20 @@ class ESL extends EventEmitter {
         this.logger = utils.getLogger(connectOptions.log || false);
         this.connection = new Connection(connectOptions, this.logger);
         
+        this.setDefaultOptions();
         this.setSocketListeners();
         this.setEventListeners();
+    }
+
+    private setDefaultOptions() {
+        if (this.connectOptions.reconnectOptions) {
+            if (this.connectOptions.reconnectOptions.maxAttemtps) {
+                this.maxReconnectAttempts = this.connectOptions.reconnectOptions.maxAttemtps;
+            }
+            if (this.connectOptions.reconnectOptions.interval) {
+                this.reconnectInterval = this.connectOptions.reconnectOptions.interval;
+            }
+        }
     }
 
     private setEventListeners() {
@@ -176,7 +190,7 @@ class ESL extends EventEmitter {
         });
 
         this.connection.socket.on('close', () => {
-            if (this.connectOptions.reconnectOptions?.reconnect){
+            if (this.connectOptions.reconnectOptions && this.connectOptions.reconnectOptions.reconnect) {
                 this.reconnect();
             }            
         });
@@ -184,7 +198,7 @@ class ESL extends EventEmitter {
     }
 
     private reconnect() {
-        if ((this.connectOptions.reconnectOptions?.maxAttemtps || Infinity) > this.failedReconnectAttempts) {
+        if (this.maxReconnectAttempts > this.failedReconnectAttempts) {
             setTimeout(() => {
                 this.buffer.empty();
                 this.logger('Reconnecting...');
@@ -192,7 +206,7 @@ class ESL extends EventEmitter {
                     .then(() => { this.failedReconnectAttempts = 0; })
                     .catch(e => { this.failedReconnectAttempts++; this.logger('Unable to connect.');                
                 });
-            }, this.connectOptions.reconnectOptions?.interval || 5000);
+            }, this.reconnectInterval);
         }
     }
 
