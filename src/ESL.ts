@@ -113,12 +113,12 @@ class ESL extends EventEmitter {
     connectOptions: ConnectOptions;
     logger = utils.getLogger(false);
  
-    failedReconnectAttempts = 0;
-    maxReconnectAttempts = Infinity;
-    reconnectInterval = 5000;
+    private failedReconnectAttempts = 0;
+    private maxReconnectAttempts = Infinity;
+    private reconnectInterval = 5000;
+    private reconnectOnFailure = false;
 
-    constructor(connectOptions: ConnectOptions = { host: '127.0.0.1', port: 8021, password: 'ClueCon',
-        reconnectOptions: { reconnect: false, interval: 3000, maxAttemtps: Infinity }}) {
+    constructor(connectOptions: ConnectOptions) {
         super();
 
         this.connectOptions = connectOptions; 
@@ -129,6 +129,7 @@ class ESL extends EventEmitter {
         this.setDefaultOptions();
         this.setSocketListeners();
         this.setEventListeners();
+
     }
 
     private setDefaultOptions() {
@@ -138,6 +139,9 @@ class ESL extends EventEmitter {
             }
             if (this.connectOptions.reconnectOptions.interval) {
                 this.reconnectInterval = this.connectOptions.reconnectOptions.interval;
+            }
+            if (this.connectOptions.reconnectOptions.reconnect) {
+                this.reconnectOnFailure = this.connectOptions.reconnectOptions.reconnect;
             }
         }
     }
@@ -190,7 +194,7 @@ class ESL extends EventEmitter {
         });
 
         this.connection.socket.on('close', () => {
-            if (this.connectOptions.reconnectOptions && this.connectOptions.reconnectOptions.reconnect) {
+            if (this.reconnectOnFailure) {
                 this.reconnect();
             }            
         });
@@ -225,6 +229,14 @@ class ESL extends EventEmitter {
 
     }
 
+    sendmsg(command: string, app: string, arg: string = '') {
+        this.connection.socket.write(`sendmsg\n`);
+        this.connection.socket.write(`call-command: ${command}\n`);
+        this.connection.socket.write(`execute-app-name: ${app}\n`);
+        this.connection.socket.write(`execute-app-arg: ${arg}\n\n`);
+        return this.promise<string>();
+    }
+
     bgapi(command: string) {
         return new Promise(async (resolve, reject) => {
               try {
@@ -244,11 +256,10 @@ class ESL extends EventEmitter {
         })
     }
 
-    private promise<T>(command?: any) {
+    private promise<T>() {
         return new Promise<T>((resolve, reject) => {
             if (!this.connection.isOpen()) { reject('Connection is closed'); }
-            else { 
-                this.callbackQueue.push({ resolve, reject }); }
+            else { this.callbackQueue.push({ resolve, reject }); }
         });
     }
 
@@ -268,7 +279,7 @@ class ESL extends EventEmitter {
 
     private async authenticate() {
         try {
-            const authResponse = await this.send(`auth ${this.connection.connectOptions.password}`);
+            const authResponse = await this.send(`auth ${this.connectOptions.password}`);
             if (authResponse.startsWith('+OK')) { 
                 this.logger('Authentication success');
                 this.executeOnConnect();

@@ -5,16 +5,22 @@ import { ConnectionState } from './enums';
 class Connection {
 
     socket: Socket = new Socket();
-    connectOptions: ConnectOptions;
     connectionState: ConnectionState = ConnectionState.Closed;
+    connectOptions: ConnectOptions;
     logger: any;
 
     currentPromise: { resolve:Function, reject:Function } = { resolve: () => {}, reject: () => {} }
 
-    constructor(connectOptions: ConnectOptions, logger: any){
-        this.connectOptions = connectOptions;
-        this.logger = logger;
+    constructor(connectOptions: ConnectOptions, logger: any) {
+        if (connectOptions.connection instanceof Socket) {
+            this.socket = connectOptions.connection;
+            this.connectionState = ConnectionState.Connected;
+        }
 
+        this.connectOptions = connectOptions;
+        var r = connectOptions.connection;
+        
+        this.logger = logger;
         this.setSocketListeners();
     }
 
@@ -43,15 +49,21 @@ class Connection {
         });
     }
 
+    socketDataProvided(socket: Socket) {
+        return socket.remotePort && socket.remoteAddress && socket.localPort  && socket.localAddress; 
+    }
+
     connect() {
         return new Promise<string>((resolve, reject) => {
             this.connectionState = ConnectionState.Connecting;
-            this.currentPromise = { resolve, reject };
-
-            this.socket.connect({
-                host: this.connectOptions.host,
-                port: this.connectOptions.port,
-            });
+            if (this.connectOptions.connection instanceof Socket) {
+                this.socketDataProvided(this.connectOptions.connection) ?
+                    resolve('Already connected') : reject('Refuse to connect Socket. Please provide host and port instead');
+            }
+            else {
+                this.currentPromise = { resolve, reject };
+                this.socket.connect(this.connectOptions.connection);
+            }
         });
     }
 

@@ -1,13 +1,14 @@
+import { Socket } from 'net';
+
 interface ConnectOptions {
-    host: string,
-    port: number,
-    password: string,
+    connection: { host: string, port: number } | Socket,
+    password?: string,
     reconnectOptions? : {
-        reconnect?: Boolean,
+        reconnect?: boolean,
         interval?: number,
         maxAttemtps?: number
     },
-    log?: Boolean
+    log?: boolean
 }
 
 export default ConnectOptions;
