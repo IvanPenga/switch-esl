@@ -61,7 +61,7 @@ class ESL extends EventEmitter {
         this.addEventListener('BACKGROUND_JOB', (event) => {
             const { resolve } = this.bgapiQueue[event["Job-UUID"]] || {  };
             delete this.bgapiQueue[event["Job-UUID"]];
-            if (typeof resolve == 'function') { resolve(event) }; 
+            if (typeof resolve == 'function') { resolve(event._body) }; 
         })
     }
 
