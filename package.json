@@ -1,6 +1,6 @@
 {
   "name": "switch-esl",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Freeswitch event socket library",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
