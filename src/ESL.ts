@@ -1,101 +1,12 @@
 import ESLBuffer from './ESLBuffer';
 import Connection from './Connection';
 import { EventEmitter } from 'events';
-import { ConnectOptions, CommandResponse, ApiResponse } from './interfaces';
+import { ConnectOptions } from './interfaces';
 import { loglevel } from './types';
 
 import utils from './utils';
+import * as events from './events';
 
-import { 
-    ConferenceMaintenance,
-    AddSchedule,
-    Api,
-    BackgroundJob,
-    CallDetail,
-    CallSecure,
-    CallSetupReq,
-    CallUpdate,
-    Cdr,
-    ChannelAnswer,
-    ChannelApplication,
-    ChannelBridge,
-    ChannelCallstate,
-    ChannelCreate,
-    ChannelData,
-    ChannelDestroy,
-    ChannelExecute,
-    ChannelExecuteComplete,
-    ChannelGlobal,
-    ChannelHangup,
-    ChannelHangupComplete,
-    ChannelHold,
-    ChannelOriginate,
-    ChannelOutgoing,
-    ChannelPark,
-    ChannelProgress,
-    ChannelProgressMedia,
-    ChannelState,
-    ChannelUnbridge,
-    ChannelUnhold,
-    ChannelUnpark,
-    ChannelUuid,
-    Clone,
-    Codec,
-    Command,
-    ConferenceData,
-    ConferenceDataQuery,
-    Custom,
-    DelSchedule,
-    DetectedSpeech,
-    DetectedTone,
-    DeviceState,
-    Dtmf,
-    ExeSchedule,
-    Failure,
-    General,
-    Heartbeat,
-    Log,
-    MediaBugStart,
-    MediaBugStop,
-    Message,
-    MessageQuery,
-    MessageWaiting,
-    ModuleLoad,
-    ModuleUnload,
-    Nat,
-    Notalk,
-    Notify,
-    NotifyIn,
-    PhoneFeature,
-    PhoneFeatureSubscribe,
-    PlaybackStart,
-    PlaybackStop,
-    PresenceIn,
-    PresenceOut,
-    PresenceProbe,
-    PrivateCommand,
-    Publish,
-    QueueLen,
-    RecordStart,
-    RecordStop,
-    RecvInfo,
-    RecvMessage,
-    RecvRtcpMessage,
-    Recycle,
-    Reloadxml,
-    RequestParams,
-    ReSchedule,
-    Roster,
-    SendInfo,
-    SendMessage,
-    SessionHeartbeat,
-    Shutdown,
-    Startup,
-    SubclassAny,
-    Talk,
-    Trap,
-    Unpublish
-} from './events';
 import EventParser from './EventParser';
 
 class ESL extends EventEmitter {
@@ -154,9 +65,6 @@ class ESL extends EventEmitter {
         })
     }
 
-
-    cbuffer:Buffer = Buffer.alloc(0);
-
     private resolveNext(response: any) {
         const { resolve } = this.callbackQueue.shift() || {  };
         if (typeof resolve == 'function') { resolve(response) }; 
@@ -172,13 +80,7 @@ class ESL extends EventEmitter {
     }
 
     private setSocketListeners(){
-
         this.connection.socket.on('data', (data: Buffer) => {
-
-            //console.log("got some data!");
-            //console.log(data + "");
-            this.cbuffer = Buffer.concat([this.cbuffer, data], this.cbuffer.length + data.length);
-
             this.buffer.getResponses(data).forEach(response => {
                 const parsedResponse = this.eventParser.parseResponse(response);
                 if (parsedResponse) {
@@ -226,7 +128,7 @@ class ESL extends EventEmitter {
     }
 
     api(command: string) {
-
+        return this.send(`api ${command}`);
     }
 
     sendmsg(command: string, app: string, arg: string = '') {
@@ -309,97 +211,97 @@ class ESL extends EventEmitter {
         this.removeAllListeners('log');
     }
 
-    addEventListener(event:'ADD_SCHEDULE',   fn: (event: AddSchedule) => void): void;
-    addEventListener(event:'API',   fn: (event: Api) => void): void;
-    addEventListener(event:'BACKGROUND_JOB',   fn: (event: BackgroundJob) => void): void;
-    addEventListener(event:'CALL_DETAIL',   fn: (event: CallDetail) => void): void;
-    addEventListener(event:'CALL_SECURE',   fn: (event: CallSecure) => void): void;
-    addEventListener(event:'CALL_SETUP_REQ',   fn: (event: CallSetupReq) => void): void;
-    addEventListener(event:'CALL_UPDATE',   fn: (event: CallUpdate) => void): void;
-    addEventListener(event:'CDR',   fn: (event: Cdr) => void): void;
-    addEventListener(event:'CHANNEL_ANSWER',   fn: (event: ChannelAnswer) => void): void;
-    addEventListener(event:'CHANNEL_APPLICATION',   fn: (event: ChannelApplication) => void): void;
-    addEventListener(event:'CHANNEL_BRIDGE',   fn: (event: ChannelBridge) => void): void;
-    addEventListener(event:'CHANNEL_CALLSTATE',   fn: (event: ChannelCallstate) => void): void;
-    addEventListener(event:'CHANNEL_CREATE',   fn: (event: ChannelCreate) => void): void;
-    addEventListener(event:'CHANNEL_DATA',   fn: (event: ChannelData) => void): void;
-    addEventListener(event:'CHANNEL_DESTROY',   fn: (event: ChannelDestroy) => void): void;
-    addEventListener(event:'CHANNEL_EXECUTE',   fn: (event: ChannelExecute) => void): void;
-    addEventListener(event:'CHANNEL_EXECUTE_COMPLETE',   fn: (event: ChannelExecuteComplete) => void): void;
-    addEventListener(event:'CHANNEL_GLOBAL',   fn: (event: ChannelGlobal) => void): void;
-    addEventListener(event:'CHANNEL_HANGUP',   fn: (event: ChannelHangup) => void): void;
-    addEventListener(event:'CHANNEL_HANGUP_COMPLETE',   fn: (event: ChannelHangupComplete) => void): void;
-    addEventListener(event:'CHANNEL_HOLD',   fn: (event: ChannelHold) => void): void;
-    addEventListener(event:'CHANNEL_ORIGINATE',   fn: (event: ChannelOriginate) => void): void;
-    addEventListener(event:'CHANNEL_OUTGOING',   fn: (event: ChannelOutgoing) => void): void;
-    addEventListener(event:'CHANNEL_PARK',   fn: (event: ChannelPark) => void): void;
-    addEventListener(event:'CHANNEL_PROGRESS',   fn: (event: ChannelProgress) => void): void;
-    addEventListener(event:'CHANNEL_PROGRESS_MEDIA',   fn: (event: ChannelProgressMedia) => void): void;
-    addEventListener(event:'CHANNEL_STATE',   fn: (event: ChannelState) => void): void;
-    addEventListener(event:'CHANNEL_UNBRIDGE',   fn: (event: ChannelUnbridge) => void): void;
-    addEventListener(event:'CHANNEL_UNHOLD',   fn: (event: ChannelUnhold) => void): void;
-    addEventListener(event:'CHANNEL_UNPARK',   fn: (event: ChannelUnpark) => void): void;
-    addEventListener(event:'CHANNEL_UUID',   fn: (event: ChannelUuid) => void): void;
-    addEventListener(event:'CLONE',   fn: (event: Clone) => void): void;
-    addEventListener(event:'CODEC',   fn: (event: Codec) => void): void;
-    addEventListener(event:'COMMAND',   fn: (event: Command) => void): void;
-    addEventListener(event:'CONFERENCE_DATA',   fn: (event: ConferenceData) => void): void;
-    addEventListener(event:'CONFERENCE_DATA_QUERY',   fn: (event: ConferenceDataQuery) => void): void;
-    addEventListener(event:'CUSTOM',   fn: (event: Custom) => void): void;
-    addEventListener(event:'DEL_SCHEDULE',   fn: (event: DelSchedule) => void): void;
-    addEventListener(event:'DETECTED_SPEECH',   fn: (event: DetectedSpeech) => void): void;
-    addEventListener(event:'DETECTED_TONE',   fn: (event: DetectedTone) => void): void;
-    addEventListener(event:'DEVICE_STATE',   fn: (event: DeviceState) => void): void;
-    addEventListener(event:'DTMF',   fn: (event: Dtmf) => void): void;
-    addEventListener(event:'EXE_SCHEDULE',   fn: (event: ExeSchedule) => void): void;
-    addEventListener(event:'FAILURE',   fn: (event: Failure) => void): void;
-    addEventListener(event:'GENERAL',   fn: (event: General) => void): void;
-    addEventListener(event:'HEARTBEAT',   fn: (event: Heartbeat) => void): void;
-    addEventListener(event:'LOG',   fn: (event: Log) => void): void;
-    addEventListener(event:'MEDIA_BUG_START',   fn: (event: MediaBugStart) => void): void;
-    addEventListener(event:'MEDIA_BUG_STOP',   fn: (event: MediaBugStop) => void): void;
-    addEventListener(event:'MESSAGE',   fn: (event: Message) => void): void;
-    addEventListener(event:'MESSAGE_QUERY',   fn: (event: MessageQuery) => void): void;
-    addEventListener(event:'MESSAGE_WAITING',   fn: (event: MessageWaiting) => void): void;
-    addEventListener(event:'MODULE_LOAD',   fn: (event: ModuleLoad) => void): void;
-    addEventListener(event:'MODULE_UNLOAD',   fn: (event: ModuleUnload) => void): void;
-    addEventListener(event:'NAT',   fn: (event: Nat) => void): void;
-    addEventListener(event:'NOTALK',   fn: (event: Notalk) => void): void;
-    addEventListener(event:'NOTIFY',   fn: (event: Notify) => void): void;
-    addEventListener(event:'NOTIFY_IN',   fn: (event: NotifyIn) => void): void;
-    addEventListener(event:'PHONE_FEATURE',   fn: (event: PhoneFeature) => void): void;
-    addEventListener(event:'PHONE_FEATURE_SUBSCRIBE',   fn: (event: PhoneFeatureSubscribe) => void): void;
-    addEventListener(event:'PLAYBACK_START',   fn: (event: PlaybackStart) => void): void;
-    addEventListener(event:'PLAYBACK_STOP',   fn: (event: PlaybackStop) => void): void;
-    addEventListener(event:'PRESENCE_IN',   fn: (event: PresenceIn) => void): void;
-    addEventListener(event:'PRESENCE_OUT',   fn: (event: PresenceOut) => void): void;
-    addEventListener(event:'PRESENCE_PROBE',   fn: (event: PresenceProbe) => void): void;
-    addEventListener(event:'PRIVATE_COMMAND',   fn: (event: PrivateCommand) => void): void;
-    addEventListener(event:'PUBLISH',   fn: (event: Publish) => void): void;
-    addEventListener(event:'QUEUE_LEN',   fn: (event: QueueLen) => void): void;
-    addEventListener(event:'RECORD_START',   fn: (event: RecordStart) => void): void;
-    addEventListener(event:'RECORD_STOP',   fn: (event: RecordStop) => void): void;
-    addEventListener(event:'RECV_INFO',   fn: (event: RecvInfo) => void): void;
-    addEventListener(event:'RECV_MESSAGE',   fn: (event: RecvMessage) => void): void;
-    addEventListener(event:'RECV_RTCP_MESSAGE',   fn: (event: RecvRtcpMessage) => void): void;
-    addEventListener(event:'RECYCLE',   fn: (event: Recycle) => void): void;
-    addEventListener(event:'RELOADXML',   fn: (event: Reloadxml) => void): void;
-    addEventListener(event:'REQUEST_PARAMS',   fn: (event: RequestParams) => void): void;
-    addEventListener(event:'RE_SCHEDULE',   fn: (event: ReSchedule) => void): void;
-    addEventListener(event:'ROSTER',   fn: (event: Roster) => void): void;
-    addEventListener(event:'SEND_INFO',   fn: (event: SendInfo) => void): void;
-    addEventListener(event:'SEND_MESSAGE',   fn: (event: SendMessage) => void): void;
-    addEventListener(event:'SESSION_HEARTBEAT',   fn: (event: SessionHeartbeat) => void): void;
-    addEventListener(event:'SHUTDOWN',   fn: (event: Shutdown) => void): void;
-    addEventListener(event:'STARTUP',   fn: (event: Startup) => void): void;
-    addEventListener(event:'SUBCLASS_ANY',   fn: (event: SubclassAny) => void): void;
-    addEventListener(event:'TALK',   fn: (event: Talk) => void): void;
-    addEventListener(event:'TRAP',   fn: (event: Trap) => void): void;
-    addEventListener(event:'UNPUBLISH',   fn: (event: Unpublish) => void): void;
+    addEventListener(event: 'ADD_SCHEDULE', fn: (event: events.AddSchedule) => void): void;
+    addEventListener(event: 'API', fn: (event: events.Api) => void): void;
+    addEventListener(event: 'BACKGROUND_JOB', fn: (event: events.BackgroundJob) => void): void;
+    addEventListener(event: 'CALL_DETAIL', fn: (event: events.CallDetail) => void): void;
+    addEventListener(event: 'CALL_SECURE', fn: (event: events.CallSecure) => void): void;
+    addEventListener(event: 'CALL_SETUP_REQ', fn: (event: events.CallSetupReq) => void): void;
+    addEventListener(event: 'CALL_UPDATE', fn: (event: events.CallUpdate) => void): void;
+    addEventListener(event: 'CDR', fn: (event: events.Cdr) => void): void;
+    addEventListener(event: 'CHANNEL_ANSWER', fn: (event: events.ChannelAnswer) => void): void;
+    addEventListener(event: 'CHANNEL_APPLICATION', fn: (event: events.ChannelApplication) => void): void;
+    addEventListener(event: 'CHANNEL_BRIDGE', fn: (event: events.ChannelBridge) => void): void;
+    addEventListener(event: 'CHANNEL_CALLSTATE', fn: (event: events.ChannelCallstate) => void): void;
+    addEventListener(event: 'CHANNEL_CREATE', fn: (event: events.ChannelCreate) => void): void;
+    addEventListener(event: 'CHANNEL_DATA', fn: (event: events.ChannelData) => void): void;
+    addEventListener(event: 'CHANNEL_DESTROY', fn: (event: events.ChannelDestroy) => void): void;
+    addEventListener(event: 'CHANNEL_EXECUTE', fn: (event: events.ChannelExecute) => void): void;
+    addEventListener(event: 'CHANNEL_EXECUTE_COMPLETE', fn: (event: events.ChannelExecuteComplete) => void): void;
+    addEventListener(event: 'CHANNEL_GLOBAL', fn: (event: events.ChannelGlobal) => void): void;
+    addEventListener(event: 'CHANNEL_HANGUP', fn: (event: events.ChannelHangup) => void): void;
+    addEventListener(event: 'CHANNEL_HANGUP_COMPLETE', fn: (event: events.ChannelHangupComplete) => void): void;
+    addEventListener(event: 'CHANNEL_HOLD', fn: (event: events.ChannelHold) => void): void;
+    addEventListener(event: 'CHANNEL_ORIGINATE', fn: (event: events.ChannelOriginate) => void): void;
+    addEventListener(event: 'CHANNEL_OUTGOING', fn: (event: events.ChannelOutgoing) => void): void;
+    addEventListener(event: 'CHANNEL_PARK', fn: (event: events.ChannelPark) => void): void;
+    addEventListener(event: 'CHANNEL_PROGRESS', fn: (event: events.ChannelProgress) => void): void;
+    addEventListener(event: 'CHANNEL_PROGRESS_MEDIA', fn: (event: events.ChannelProgressMedia) => void): void;
+    addEventListener(event: 'CHANNEL_STATE', fn: (event: events.ChannelState) => void): void;
+    addEventListener(event: 'CHANNEL_UNBRIDGE', fn: (event: events.ChannelUnbridge) => void): void;
+    addEventListener(event: 'CHANNEL_UNHOLD', fn: (event: events.ChannelUnhold) => void): void;
+    addEventListener(event: 'CHANNEL_UNPARK', fn: (event: events.ChannelUnpark) => void): void;
+    addEventListener(event: 'CHANNEL_UUID', fn: (event: events.ChannelUuid) => void): void;
+    addEventListener(event: 'CLONE', fn: (event: events.Clone) => void): void;
+    addEventListener(event: 'CODEC', fn: (event: events.Codec) => void): void;
+    addEventListener(event: 'COMMAND', fn: (event: events.Command) => void): void;
+    addEventListener(event: 'CONFERENCE_DATA', fn: (event: events.ConferenceData) => void): void;
+    addEventListener(event: 'CONFERENCE_DATA_QUERY', fn: (event: events.ConferenceDataQuery) => void): void;
+    addEventListener(event: 'CUSTOM', fn: (event: events.Custom) => void): void;
+    addEventListener(event: 'DEL_SCHEDULE', fn: (event: events.DelSchedule) => void): void;
+    addEventListener(event: 'DETECTED_SPEECH', fn: (event: events.DetectedSpeech) => void): void;
+    addEventListener(event: 'DETECTED_TONE', fn: (event: events.DetectedTone) => void): void;
+    addEventListener(event: 'DEVICE_STATE', fn: (event: events.DeviceState) => void): void;
+    addEventListener(event: 'DTMF', fn: (event: events.Dtmf) => void): void;
+    addEventListener(event: 'EXE_SCHEDULE', fn: (event: events.ExeSchedule) => void): void;
+    addEventListener(event: 'FAILURE', fn: (event: events.Failure) => void): void;
+    addEventListener(event: 'GENERAL', fn: (event: events.General) => void): void;
+    addEventListener(event: 'HEARTBEAT', fn: (event: events.Heartbeat) => void): void;
+    addEventListener(event: 'LOG', fn: (event: events.Log) => void): void;
+    addEventListener(event: 'MEDIA_BUG_START', fn: (event: events.MediaBugStart) => void): void;
+    addEventListener(event: 'MEDIA_BUG_STOP', fn: (event: events.MediaBugStop) => void): void;
+    addEventListener(event: 'MESSAGE', fn: (event: events.Message) => void): void;
+    addEventListener(event: 'MESSAGE_QUERY', fn: (event: events.MessageQuery) => void): void;
+    addEventListener(event: 'MESSAGE_WAITING', fn: (event: events.MessageWaiting) => void): void;
+    addEventListener(event: 'MODULE_LOAD', fn: (event: events.ModuleLoad) => void): void;
+    addEventListener(event: 'MODULE_UNLOAD', fn: (event: events.ModuleUnload) => void): void;
+    addEventListener(event: 'NAT', fn: (event: events.Nat) => void): void;
+    addEventListener(event: 'NOTALK', fn: (event: events.Notalk) => void): void;
+    addEventListener(event: 'NOTIFY', fn: (event: events.Notify) => void): void;
+    addEventListener(event: 'NOTIFY_IN', fn: (event: events.NotifyIn) => void): void;
+    addEventListener(event: 'PHONE_FEATURE', fn: (event: events.PhoneFeature) => void): void;
+    addEventListener(event: 'PHONE_FEATURE_SUBSCRIBE', fn: (event: events.PhoneFeatureSubscribe) => void): void;
+    addEventListener(event: 'PLAYBACK_START', fn: (event: events.PlaybackStart) => void): void;
+    addEventListener(event: 'PLAYBACK_STOP', fn: (event: events.PlaybackStop) => void): void;
+    addEventListener(event: 'PRESENCE_IN', fn: (event: events.PresenceIn) => void): void;
+    addEventListener(event: 'PRESENCE_OUT', fn: (event: events.PresenceOut) => void): void;
+    addEventListener(event: 'PRESENCE_PROBE', fn: (event: events.PresenceProbe) => void): void;
+    addEventListener(event: 'PRIVATE_COMMAND', fn: (event: events.PrivateCommand) => void): void;
+    addEventListener(event: 'PUBLISH', fn: (event: events.Publish) => void): void;
+    addEventListener(event: 'QUEUE_LEN', fn: (event: events.QueueLen) => void): void;
+    addEventListener(event: 'RECORD_START', fn: (event: events.RecordStart) => void): void;
+    addEventListener(event: 'RECORD_STOP', fn: (event: events.RecordStop) => void): void;
+    addEventListener(event: 'RECV_INFO', fn: (event: events.RecvInfo) => void): void;
+    addEventListener(event: 'RECV_MESSAGE', fn: (event: events.RecvMessage) => void): void;
+    addEventListener(event: 'RECV_RTCP_MESSAGE', fn: (event: events.RecvRtcpMessage) => void): void;
+    addEventListener(event: 'RECYCLE', fn: (event: events.Recycle) => void): void;
+    addEventListener(event: 'RELOADXML', fn: (event: events.Reloadxml) => void): void;
+    addEventListener(event: 'REQUEST_PARAMS', fn: (event: events.RequestParams) => void): void;
+    addEventListener(event: 'RE_SCHEDULE', fn: (event: events.ReSchedule) => void): void;
+    addEventListener(event: 'ROSTER', fn: (event: events.Roster) => void): void;
+    addEventListener(event: 'SEND_INFO', fn: (event: events.SendInfo) => void): void;
+    addEventListener(event: 'SEND_MESSAGE', fn: (event: events.SendMessage) => void): void;
+    addEventListener(event: 'SESSION_HEARTBEAT', fn: (event: events.SessionHeartbeat) => void): void;
+    addEventListener(event: 'SHUTDOWN', fn: (event: events.Shutdown) => void): void;
+    addEventListener(event: 'STARTUP', fn: (event: events.Startup) => void): void;
+    addEventListener(event: 'SUBCLASS_ANY', fn: (event: events.SubclassAny) => void): void;
+    addEventListener(event: 'TALK', fn: (event: events.Talk) => void): void;
+    addEventListener(event: 'TRAP', fn: (event: events.Trap) => void): void;
+    addEventListener(event: 'UNPUBLISH', fn: (event: events.Unpublish) => void): void;
 
     addEventListener(event:'ALL', fn: (event: any) => void): void;
     
-    addEventListener(event: 'CUSTOM conference::maintenance', fn: (event: ConferenceMaintenance) => void): void;
+    addEventListener(event: 'CUSTOM conference::maintenance', fn: (event: events.ConferenceMaintenance) => void): void;
     addEventListener(event: 'CUSTOM alsa::ringing', fn: (event: any) => void): void;
     addEventListener(event: 'CUSTOM bert::in_sync', fn: (event: any) => void): void;
     addEventListener(event: 'CUSTOM bert::lost_sync', fn: (event: any) => void): void;
