@@ -1,7 +1,7 @@
 {
   "name": "switch-esl",
   "version": "1.0.0",
-  "description": "",
+  "description": "Freeswitch event socket library",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,5 +11,16 @@
   "devDependencies": {},
   "dependencies": {
     "@types/node": "^14.0.13"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IvanPenga/switch-esl.git"
+  },
+  "bugs": {
+    "url": "https://github.com/IvanPenga/switch-esl/issues"
+  },
+  "homepage": "https://github.com/IvanPenga/switch-esl#readme"
 }
