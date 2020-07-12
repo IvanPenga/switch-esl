@@ -1,10 +1,11 @@
 {
   "name": "switch-esl",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Freeswitch event socket library",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -16,7 +17,7 @@
   "directories": {
     "test": "test",
     "src": "src",
-    "dist": "dist"
+    "lib": "lib"
   },
   "repository": {
     "type": "git",
