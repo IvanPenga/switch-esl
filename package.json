@@ -1,6 +1,6 @@
 {
   "name": "switch-esl",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Freeswitch event socket library",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -26,5 +26,6 @@
   "bugs": {
     "url": "https://github.com/IvanPenga/switch-esl/issues"
   },
-  "homepage": "https://github.com/IvanPenga/switch-esl#readme"
+  "homepage": "https://github.com/IvanPenga/switch-esl#readme",
+  "files": ["lib/**/*"]
 }
