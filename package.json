@@ -8,7 +8,7 @@
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Ivan Penga",
   "license": "ISC",
   "devDependencies": {},
   "dependencies": {
@@ -29,5 +29,11 @@
   "homepage": "https://github.com/IvanPenga/switch-esl#readme",
   "files": [
     "lib/**/*"
+  ],
+  "keywords": [
+    "freeswitch",
+    "event socket",
+    "event socket library",
+    "esl"
   ]
 }
