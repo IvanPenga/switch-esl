@@ -1,6 +1,14 @@
 # switch-esl
 ### Implementation of Freeswitch event socket library written in Typescript
 
+### Installation
+
+```
+npm install switch-esl
+```
+
+### Freeswitch setup 
+
 Make sure that event_socket.conf.xml is configured properly, for example: 
 
 ```XML
@@ -14,6 +22,8 @@ Make sure that event_socket.conf.xml is configured properly, for example:
   </settings>
 </configuration>
 ```
+
+### Usage 
 
 Basic client usage:
 ```javascript
@@ -73,6 +83,9 @@ eslClient.addEventListener(['CHANNEL_ANSWER', 'CHANNEL_DESTROY'], (event) => {})
 //Logs all 'info' and above messages
 eslClient.addLogListener('info', (log) => {  });
 
+//Add event filter
+eslClient.addFilter('call-direction', 'outbound');
+
 //Remove event filter
 eslClient.removeFilter('call-direction', 'outbound');
 
@@ -83,5 +96,12 @@ eslClient.removeEventListener('CHANNEL_ANSWER');
 eslClient.removeLogListener();
 ```
 
+#### More about Freeswitch Event socket library
+
+1. mod_event_socket
+https://freeswitch.org/confluence/display/FREESWITCH/mod_event_socket
+
+2. Other Event socket library implementations
+https://freeswitch.org/confluence/display/FREESWITCH/Event+Socket+Library
 
 
