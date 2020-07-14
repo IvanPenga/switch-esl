@@ -91,11 +91,9 @@ export default (api: (command: string) => Promise<string>) => {
         return api(`callcenter_config queue load '${queueName}'`);
     }
 
-
     function queueUnload(queueName: string) {
         return api(`callcenter_config queue unload '${queueName}'`);
     }
-
 
     function queueReload(queueName: string) {
         return api(`callcenter_config queue reload '${queueName}'`);
@@ -105,16 +103,13 @@ export default (api: (command: string) => Promise<string>) => {
         return api(`callcenter_config queue list`);
     }
 
-
     function queueListAgents(queueName: string, status: string, state: string) {
         return api(`callcenter_config queue list agents '${queueName}' '${status}' '${state}'`);
     }
 
-
     function queueListMembers(queueName: string) {
         return api(`callcenter_config queue list members '${queueName}'`);
     }
-
 
     function queueListTiers(queueName: string) {
         return api(`callcenter_config queue list tiers '${queueName}'`);
@@ -124,11 +119,9 @@ export default (api: (command: string) => Promise<string>) => {
         return api(`callcenter_config queue count`);
     }
 
-
     function queueCountAgents(queueName: string, status: string, state: string) {
         return api(`callcenter_config queue count agents '${queueName}' '${status}' '${state}'`);
     }
-
 
     function queueCountMembers(queueName: string) {
         return api(`callcenter_config queue count members '${queueName}'`);
