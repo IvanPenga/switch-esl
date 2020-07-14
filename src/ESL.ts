@@ -8,7 +8,7 @@ import utils from './utils';
 import * as events from './events';
 
 import EventParser from './EventParser';
-
+import APICallcenter from './api/callcenter/APICallcenter';
 class ESL extends EventEmitter {
 
     connection: Connection;
@@ -28,6 +28,8 @@ class ESL extends EventEmitter {
     private maxReconnectAttempts = Infinity;
     private reconnectInterval = 5000;
     private reconnectOnFailure = false;
+
+    callcenter = APICallcenter(this.api.bind(this));
 
     constructor(connectOptions: ConnectOptions) {
         super();
@@ -66,8 +68,21 @@ class ESL extends EventEmitter {
     }
 
     private resolveNext(response: any) {
-        const { resolve } = this.callbackQueue.shift() || {  };
-        if (typeof resolve == 'function') { resolve(response) }; 
+        const { resolve, reject, parser } = this.callbackQueue.shift() || {  };
+        if (typeof resolve == 'function') { 
+            if (parser && typeof parser === 'function') {
+                try {
+                    const parsedResponse = parser(response);
+                    resolve(parsedResponse);
+                }
+                catch(error) {
+                    reject(error, response);
+                }
+            }
+            else {
+                resolve(response);
+            }          
+        }; 
     }
 
     private rejectNext(response: any) {
@@ -122,13 +137,13 @@ class ESL extends EventEmitter {
         });
     }
 
-    send(command: string){
+    send(command: string, parser?: (result: string) => { }){
         this.connection.send(command);
-        return this.promise<string>();
+        return this.promise<string>(parser);
     }
 
-    api(command: string) {
-        return this.send(`api ${command}`);
+    api(command: string, parser?: (result: string) => { }) {
+        return this.send(`api ${command}`, parser);
     }
 
     sendmsg(command: string, app: string, arg: string = '') {
@@ -158,10 +173,10 @@ class ESL extends EventEmitter {
         })
     }
 
-    private promise<T>() {
+    private promise<T>(parser?: (result: string) => { }) {
         return new Promise<T>((resolve, reject) => {
             if (!this.connection.isOpen()) { reject('Connection is closed'); }
-            else { this.callbackQueue.push({ resolve, reject }); }
+            else { this.callbackQueue.push({ resolve, reject, parser }); }
         });
     }
 
@@ -196,7 +211,6 @@ class ESL extends EventEmitter {
             throw new Error(error);
         }
     }
-
     
     addLogListener(loglevel: loglevel, callback: (log: string) => void) {
         this.send(`log ${loglevel}`).catch(() => {});
@@ -422,6 +436,8 @@ class ESL extends EventEmitter {
         this.send(`filter delete ${key} ${value}`).catch(() => { });
         this.commandsOnConnect.delete(`filter delete ${key} ${value}`);
     }
+
+
 }
 
 export default ESL;
