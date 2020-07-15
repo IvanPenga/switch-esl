@@ -9,6 +9,7 @@ import * as events from './events';
 
 import EventParser from './EventParser';
 import APICallcenter from './api/callcenter/APICallcenter';
+import APIConference from './api/conference/APIConference';
 class ESL extends EventEmitter {
 
     connection: Connection;
@@ -30,6 +31,7 @@ class ESL extends EventEmitter {
     private reconnectOnFailure = false;
 
     callcenter = APICallcenter(this.api.bind(this));
+    conference = APIConference(this.api.bind(this));
 
     constructor(connectOptions: ConnectOptions) {
         super();
