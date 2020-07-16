@@ -10,6 +10,9 @@ import * as events from './events';
 import EventParser from './EventParser';
 import APICallcenter from './api/callcenter/APICallcenter';
 import APIConference from './api/conference/APIConference';
+
+import Session from './objects/Session';
+
 class ESL extends EventEmitter {
 
     connection: Connection;
@@ -31,7 +34,33 @@ class ESL extends EventEmitter {
     private reconnectOnFailure = false;
 
     callcenter = APICallcenter(this.api.bind(this));
-    conference = APIConference(this.api.bind(this));
+    conference = APIConference(this.api.bind(this), this.addEventListener.bind(this));
+
+    private channelEvents = [
+        'CHANNEL_ANSWER',
+        'CHANNEL_APPLICATION',
+        'CHANNEL_BRIDGE',
+        'CHANNEL_CALLSTATE',
+        'CHANNEL_CREATE',
+        'CHANNEL_DATA',
+        'CHANNEL_DESTROY',
+        'CHANNEL_EXECUTE',
+        'CHANNEL_EXECUTE_COMPLETE',
+        'CHANNEL_GLOBAL',
+        'CHANNEL_HANGUP',
+        'CHANNEL_HANGUP_COMPLETE',
+        'CHANNEL_HOLD',
+        'CHANNEL_ORIGINATE',
+        'CHANNEL_OUTGOING',
+        'CHANNEL_PARK',
+        'CHANNEL_PROGRESS',
+        'CHANNEL_PROGRESS_MEDIA',
+        'CHANNEL_STATE',
+        'CHANNEL_UNBRIDGE',
+        'CHANNEL_UNHOLD',
+        'CHANNEL_UNPARK',
+        'CHANNEL_UUID',
+    ]
 
     constructor(connectOptions: ConnectOptions) {
         super();
@@ -225,6 +254,31 @@ class ESL extends EventEmitter {
         this.send(`nolog`).catch(() => {});
         this.commandsOnConnect.delete(`log ${this.currentLoglevel}`);
         this.removeAllListeners('log');
+    }
+
+
+    listen(callback: (session: Session) => void) {
+
+        const channels: {
+            [key: string]: Session
+        } = {  };
+
+        this.addEventListener(this.channelEvents, (event) => {
+            const uuid = event["Unique-ID"];
+            if (channels[uuid]) { channels[uuid].emit(event["Event-Name"], event); }
+        });
+
+        this.addEventListener('CHANNEL_CREATE', (event) => {
+            const uuid = event["Unique-ID"];
+            channels[uuid] = new Session(event);
+            callback(channels[uuid]);
+        });
+
+        this.addEventListener('CHANNEL_DESTROY', (event) => {
+            const uuid = event["Unique-ID"];
+            delete channels[uuid];
+        });
+
     }
 
     addEventListener(event: 'ADD_SCHEDULE', fn: (event: events.AddSchedule) => void): void;
