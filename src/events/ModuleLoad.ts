@@ -1,8 +1,12 @@
+import AbstractEvent from './AbstractEvent';
+class ModuleLoad extends AbstractEvent {
 
-    import AbstractEvent from './AbstractEvent';
-    
-    class ModuleLoad extends AbstractEvent {
-    
-    }
-      
-    export default ModuleLoad;
+    public 'type' = '';
+    public 'name' = '';
+    public 'description' = '';
+    public 'syntax' = '';
+    public 'key' = '';
+    public 'filename' = '';
+}
+export default ModuleLoad
+

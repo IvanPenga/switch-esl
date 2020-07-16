@@ -1,8 +1,11 @@
+import AbstractEvent from './AbstractEvent';
+class ConferenceData extends AbstractEvent {
 
-    import AbstractEvent from './AbstractEvent';
+    public 'conference-name' = '';
+    public 'conference-domain' = '';
+    public 'Content-Length' = '';
+    public '_body' = '';
     
-    class ConferenceData extends AbstractEvent {
-    
-    }
-      
-    export default ConferenceData;
+}
+export default ConferenceData
+

@@ -1,4 +1,4 @@
-import AbstractEvent from './AbstractEvent';
+import AbstractEvent from '../AbstractEvent';
 
 class ConferenceMaintenance extends AbstractEvent {
 

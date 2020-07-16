@@ -1,8 +1,70 @@
+import AbstractEvent from './AbstractEvent';
+class ChannelOriginate extends AbstractEvent {
 
-    import AbstractEvent from './AbstractEvent';
-    
-    class ChannelOriginate extends AbstractEvent {
-    
-    }
-      
-    export default ChannelOriginate;
+    public 'Channel-State' = '';
+    public 'Channel-Call-State' = '';
+    public 'Channel-State-Number' = '';
+    public 'Channel-Name' = '';
+    public 'Unique-ID' = '';
+    public 'Call-Direction' = '';
+    public 'Presence-Call-Direction' = '';
+    public 'Channel-HIT-Dialplan' = '';
+    public 'Channel-Call-UUID' = '';
+    public 'Answer-State' = '';
+    public 'Caller-Direction' = '';
+    public 'Caller-Logical-Direction' = '';
+    public 'Caller-Caller-ID-Number' = '';
+    public 'Caller-Orig-Caller-ID-Number' = '';
+    public 'Caller-Callee-ID-Name' = '';
+    public 'Caller-Callee-ID-Number' = '';
+    public 'Caller-ANI' = '';
+    public 'Caller-Destination-Number' = '';
+    public 'Caller-Unique-ID' = '';
+    public 'Caller-Source' = '';
+    public 'Caller-Context' = '';
+    public 'Caller-Channel-Name' = '';
+    public 'Caller-Profile-Index' = '';
+    public 'Caller-Profile-Created-Time' = '';
+    public 'Caller-Channel-Created-Time' = '';
+    public 'Caller-Channel-Answered-Time' = '';
+    public 'Caller-Channel-Progress-Time' = '';
+    public 'Caller-Channel-Progress-Media-Time' = '';
+    public 'Caller-Channel-Hangup-Time' = '';
+    public 'Caller-Channel-Transfer-Time' = '';
+    public 'Caller-Channel-Resurrect-Time' = '';
+    public 'Caller-Channel-Bridged-Time' = '';
+    public 'Caller-Channel-Last-Hold' = '';
+    public 'Caller-Channel-Hold-Accum' = '';
+    public 'Caller-Screen-Bit' = '';
+    public 'Caller-Privacy-Hide-Name' = '';
+    public 'Caller-Privacy-Hide-Number' = '';
+    public 'variable_direction' = '';
+    public 'variable_is_outbound' = '';
+    public 'variable_uuid' = '';
+    public 'variable_call_uuid' = '';
+    public 'variable_session_id' = '';
+    public 'variable_sip_local_network_addr' = '';
+    public 'variable_sip_profile_name' = '';
+    public 'variable_text_media_flow' = '';
+    public 'variable_channel_name' = '';
+    public 'variable_sip_destination_url' = '';
+    public 'variable_originate_early_media' = '';
+    public 'variable_rtp_use_codec_string' = '';
+    public 'variable_local_media_ip' = '';
+    public 'variable_local_media_port' = '';
+    public 'variable_advertised_media_ip' = '';
+    public 'variable_audio_media_flow' = '';
+    public 'variable_local_video_ip' = '';
+    public 'variable_local_video_port' = '';
+    public 'variable_video_media_flow' = '';
+    public 'variable_rtp_local_sdp_str' = '';
+    public 'variable_sip_outgoing_contact_uri' = '';
+    public 'variable_sip_req_uri' = '';
+    public 'variable_sip_to_host' = '';
+    public 'variable_sip_from_host' = '';
+    public 'variable_sofia_profile_name' = '';
+    public 'variable_recovery_profile_name' = '';
+    public 'variable_sofia_profile_url' = '';
+}
+export default ChannelOriginate
+

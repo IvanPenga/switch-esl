@@ -1,4 +1,4 @@
-import ConferenceMaintenance from './ConferenceMaintenance';
+import ConferenceMaintenance from './custom/ConferenceMaintenance';
 import AddSchedule from './AddSchedule';
 import Api from './Api';
 import BackgroundJob from './BackgroundJob';

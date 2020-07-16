@@ -1,8 +1,7 @@
+import AbstractEvent from './AbstractEvent';
+class Reloadxml extends AbstractEvent {
 
-    import AbstractEvent from './AbstractEvent';
-    
-    class Reloadxml extends AbstractEvent {
-    
-    }
-      
-    export default Reloadxml;
+}
+
+export default Reloadxml
+
