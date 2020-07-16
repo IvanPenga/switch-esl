@@ -1,6 +1,6 @@
 export default (() => {
 
-    function getLogger(log: Boolean) {
+    function getLogger(log: boolean) {
         return (message: any) => {
             if (log) console.log(message);
         }

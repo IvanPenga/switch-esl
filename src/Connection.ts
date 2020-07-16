@@ -9,7 +9,7 @@ class Connection {
     connectOptions: ConnectOptions;
     logger: any;
 
-    currentPromise: { resolve:Function, reject:Function } = { resolve: () => {}, reject: () => {} }
+    currentPromise = { resolve: (result: string) => {}, reject: (result: string) => {} };
 
     constructor(connectOptions: ConnectOptions, logger: any) {
         if (connectOptions.connection instanceof Socket) {

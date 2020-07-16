@@ -1,18 +1,18 @@
 class AbstractEvent {
 
-    public 'Event-Name': string = '';
-    public 'Core-UUID': string = '';
-    public 'FreeSWITCH-Hostname': string = '';
-    public 'FreeSWITCH-Switchname': string = '';
-    public 'FreeSWITCH-IPv4': string = '';
-    public 'FreeSWITCH-IPv6': string = '';
-    public 'Event-Date-Local': string = '';
-    public 'Event-Date-GMT': string = '';
-    public 'Event-Date-Timestamp': string = '';
-    public 'Event-Calling-File': string = '';
-    public 'Event-Calling-Function': string = '';
-    public 'Event-Calling-Line-Number': string = '';
-    public 'Event-Sequence': string = '';
+    public 'Event-Name'= '';
+    public 'Core-UUID'= '';
+    public 'FreeSWITCH-Hostname'= '';
+    public 'FreeSWITCH-Switchname'= '';
+    public 'FreeSWITCH-IPv4'= '';
+    public 'FreeSWITCH-IPv6'= '';
+    public 'Event-Date-Local'= '';
+    public 'Event-Date-GMT'= '';
+    public 'Event-Date-Timestamp'= '';
+    public 'Event-Calling-File'= '';
+    public 'Event-Calling-Function'= '';
+    public 'Event-Calling-Line-Number'= '';
+    public 'Event-Sequence'= '';
     [key: string]: string;
 
 }

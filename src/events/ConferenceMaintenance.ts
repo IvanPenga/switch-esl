@@ -2,15 +2,15 @@ import AbstractEvent from './AbstractEvent';
 
 class ConferenceMaintenance extends AbstractEvent {
 
-  public 'Conference-Name': string = '';
-  public 'Conference-Domain': string = '';
-  public 'Conference-Size': string = '';
-  public 'Conference-Ghosts': string = '';
-  public 'Conference-Profile-Name': string = '';
-  public 'Conference-Unique-ID': string = '';
-  public 'Action': string = '';
-  public 'Caller-ANI': string = '';
-  public 'Channel-Call-UUID': string = '';
+  public 'Conference-Name'= '';
+  public 'Conference-Domain'= '';
+  public 'Conference-Size'= '';
+  public 'Conference-Ghosts'= '';
+  public 'Conference-Profile-Name'= '';
+  public 'Conference-Unique-ID'= '';
+  public 'Action'= '';
+  public 'Caller-ANI'= '';
+  public 'Channel-Call-UUID'= '';
 
 }
 
