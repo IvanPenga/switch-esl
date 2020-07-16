@@ -10,7 +10,7 @@ class ESLServer extends EventEmitter {
     super();
   }
 
-  listen(port: number, host: string = '0.0.0.0') {
+  listen(port: number, host = '0.0.0.0') {
     return new Promise((resolve, reject) => {
       this.server.on('connection', (socket) => { 
         socket.once('data', (data) => {

@@ -94,7 +94,7 @@ class ESL extends EventEmitter {
         this.addEventListener('BACKGROUND_JOB', (event) => {
             const { resolve } = this.bgapiQueue[event["Job-UUID"]] || {  };
             delete this.bgapiQueue[event["Job-UUID"]];
-            if (typeof resolve == 'function') { resolve(event._body) }; 
+            if (typeof resolve == 'function') { resolve(event._body); } 
         })
     }
 
@@ -113,12 +113,12 @@ class ESL extends EventEmitter {
             else {
                 resolve(response);
             }          
-        }; 
+        } 
     }
 
     private rejectNext(response: any) {
         const { reject } = this.callbackQueue.shift() || {  };
-        if (typeof reject == 'function') { reject(response) }; 
+        if (typeof reject == 'function') { reject(response); } 
     }
 
     private emitAllEvent(name: string, body: any) {
@@ -177,7 +177,7 @@ class ESL extends EventEmitter {
         return this.send(`api ${command}`, parser);
     }
 
-    sendmsg(command: string, app: string, arg: string = '') {
+    sendmsg(command: string, app: string, arg = '') {
         this.connection.socket.write(`sendmsg\n`);
         this.connection.socket.write(`call-command: ${command}\n`);
         this.connection.socket.write(`execute-app-name: ${app}\n`);
@@ -186,21 +186,21 @@ class ESL extends EventEmitter {
     }
 
     bgapi(command: string) {
-        return new Promise(async (resolve, reject) => {
-              try {
-                  const result = await this.send(`bgapi ${command}`);
-                  if (result.startsWith('+')) {
-                      this.bgapiQueue[result.slice(-36)] = {
-                          resolve, reject
-                      };
-                  }
-                  else {
-                      reject(`Unable to execute background api. ${result}`);
-                  }
-              }
-              catch(error) {
-                  reject(error);
-              }  
+        return new Promise((resolve, reject) => {
+            this.send(`bgapi ${command}`)
+                .then(result => {
+                    if (result.startsWith('+')) {
+                        this.bgapiQueue[result.slice(-36)] = {
+                            resolve, reject
+                        };
+                    }
+                    else {
+                        reject(`Unable to execute background api. ${result}`);
+                    }
+                })
+                .catch(error => {
+                    reject(error);
+                }) 
         })
     }
 
@@ -244,14 +244,18 @@ class ESL extends EventEmitter {
     }
     
     addLogListener(loglevel: loglevel, callback: (log: string) => void) {
-        this.send(`log ${loglevel}`).catch(() => {});
+        this.send(`log ${loglevel}`).catch(() => {
+            this.logger('Unable to add log listener');
+        });
         this.commandsOnConnect.add(`log ${loglevel}`);
         this.currentLoglevel = loglevel;
         this.addListener('log', callback);
     }
 
     removeLogListener() {
-        this.send(`nolog`).catch(() => {});
+        this.send(`nolog`).catch(() => {
+            this.logger('Unable to remove log listener');
+        });
         this.commandsOnConnect.delete(`log ${this.currentLoglevel}`);
         this.removeAllListeners('log');
     }
@@ -471,7 +475,9 @@ class ESL extends EventEmitter {
     addEventListener(event: string  | string[], callback: (event: any) => void) {
         if (typeof event === 'string') event = [ event ];
         event.forEach(e => {
-            this.send(`event json ${e}`).catch(() => { });
+            this.send(`event json ${e}`).catch(() => { 
+                this.logger(`Unable to add json event listener for ${e}`);
+            });
             this.commandsOnConnect.add(`event json ${e}`);
             this.addListener(e, callback);
         });
@@ -483,13 +489,17 @@ class ESL extends EventEmitter {
     }
 
     addFilter(key: string, value: string) {
-        this.send(`filter ${key} ${value}`).catch(() => { });
+        this.send(`filter ${key} ${value}`).catch(() => {
+            this.logger('Unable to add filter');
+        });
         this.commandsOnConnect.add(`filter ${key} ${value}`);
         return this.send(`filter ${key} ${value}`);
     }
 
     removeFilter(key: string, value: string) {
-        this.send(`filter delete ${key} ${value}`).catch(() => { });
+        this.send(`filter delete ${key} ${value}`).catch(() => { 
+            this.logger('Unable to delete filter');
+        });
         this.commandsOnConnect.delete(`filter delete ${key} ${value}`);
     }
 

@@ -8,11 +8,11 @@ class EventParser {
         return { name, body: json, isEvent: true };
     }
     
-    parseStringCommand(body: string, name: string = '') {
+    parseStringCommand(body: string, name = '') {
         return { name, body: body.trim(), isEvent: false };
     }
 
-    parseStringEvent(body: string, name: string = '') {
+    parseStringEvent(body: string, name = '') {
         return { name, body: body.trim(), isEvent: true };
     }
 

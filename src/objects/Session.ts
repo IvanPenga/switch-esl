@@ -40,7 +40,7 @@ class Session extends EventEmitter {
     on(event: 'CHANNEL_UNPARK', fn: (event: events.ChannelUnpark) => void): this;
     on(event: 'CHANNEL_UUID', fn: (event: events.ChannelUuid) => void): this;
 
-    on(event: string | symbol, fn:  (...args: any[]) => void) {
+    on(event: string | symbol, fn:  (...args: any[]) => void): this {
         return super.on(event, fn);
     }
 

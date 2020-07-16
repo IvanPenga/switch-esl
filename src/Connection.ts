@@ -9,7 +9,7 @@ class Connection {
     connectOptions: ConnectOptions;
     logger: any;
 
-    currentPromise = { resolve: (result: string) => {}, reject: (result: string) => {} };
+    currentPromise: { resolve: ( result: string ) => void, reject: (result: string) => void } | undefined;
 
     constructor(connectOptions: ConnectOptions, logger: any) {
         if (connectOptions.connection instanceof Socket) {
@@ -18,42 +18,42 @@ class Connection {
         }
 
         this.connectOptions = connectOptions;
-        var r = connectOptions.connection;
         
         this.logger = logger;
         this.setSocketListeners();
     }
 
-    setSocketListeners() {
+    setSocketListeners(): void {
         this.socket.on('connect', () => {
             this.connectionState = ConnectionState.Authenticating;
             this.logger('Socket connected');
-            this.currentPromise.resolve('Connected');
+            if (this.currentPromise) this.currentPromise.resolve('Connected');
         });
 
         this.socket.on('end', () => {
             this.connectionState = ConnectionState.Closed;
             this.logger('Socket end');
-            this.currentPromise.reject('Unable to connect. Socket end.');
+            if (this.currentPromise) this.currentPromise.reject('Unable to connect. Socket end.');
         });
 
-        this.socket.on('error', (err) => {
+        this.socket.on('error', () => {
             this.connectionState = ConnectionState.Closed;
-            this.logger('Socket error');
-            this.currentPromise.reject('Unable to connect. Socket error.');
+            this.logger(`Socket error.`);
+            if (this.currentPromise) this.currentPromise.reject('Unable to connect. Socket error.');
         });
-        this.socket.on('close', (err) => {
+        this.socket.on('close', () => {
             this.connectionState = ConnectionState.Closed;
-            this.logger('Socket closed');
-            this.currentPromise.reject('Unable to connect. Socket close.');
+            this.logger(`Socket closed.`);
+            if (this.currentPromise) this.currentPromise.reject('Unable to connect. Socket close.');
         });
     }
 
-    socketDataProvided(socket: Socket) {
-        return socket.remotePort && socket.remoteAddress && socket.localPort  && socket.localAddress; 
+    socketDataProvided(socket: Socket): boolean {
+        if (socket.remotePort && socket.remoteAddress && socket.localPort  && socket.localAddress) return true;
+        return false;
     }
 
-    connect() {
+    connect(): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             this.connectionState = ConnectionState.Connecting;
             if (this.connectOptions.connection instanceof Socket) {
@@ -67,7 +67,7 @@ class Connection {
         });
     }
 
-    send(command: string) {
+    send(command: string): void {
         if (this.isOpen()) {
             this.socket.write(command);
             this.socket.write('\n');
@@ -75,7 +75,7 @@ class Connection {
         }
     }
 
-    isOpen() {
+    isOpen(): boolean {
         return this.connectionState === ConnectionState.Connected || 
                this.connectionState === ConnectionState.Authenticating;
     }

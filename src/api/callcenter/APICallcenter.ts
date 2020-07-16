@@ -54,12 +54,12 @@ export default (api: (command: string) => Promise<string>) => {
         return api(`callcenter_config agent get uuid '${name}'`);
     }
 
-    function agentList(name: string = '') {
+    function agentList(name = '') {
         if (name) return api(`callcenter_config agent list '${name}'`);
         return api(`callcenter_config agent list`);   
     }
 
-    function tierAdd(queueName: string, agentName: string, level: string = '1', position: string = '1') {   
+    function tierAdd(queueName: string, agentName: string, level = '1', position = '1') {   
         return api(`callcenter_config tier add '${queueName}' '${agentName}' ${level} ${position}`);
     }
 
