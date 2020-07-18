@@ -4,9 +4,12 @@
     "declaration": true,                  
     "strict": true,                           
     "moduleResolution": "node",               
-    "types": ["node"],                        
+    "types": ["node", "mocha"],                        
     "esModuleInterop": true,                  
     "skipLibCheck": true,                     
-    "forceConsistentCasingInFileNames": true  
-  }
+    "forceConsistentCasingInFileNames": true,     
+  },
+  "include": [
+    "./src/**/*"
+  ], 
 }
