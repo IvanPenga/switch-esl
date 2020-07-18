@@ -213,7 +213,7 @@ Member add:  Conference {
     '12': ConferenceMember {
       id: '12',
       uuid: 'c904171f-5d3f-4b37-ad34-2b179fb8eda5',
-      channelName: 'sofia/internal/0000000000@172.31.2.115',
+      channelName: 'sofia/internal/0000000000@127.0.0.1',
       joinedAt: '1594884345076393',
       leftAt: ''
     }
@@ -228,14 +228,14 @@ Member add:  Conference {
     '12': ConferenceMember {
       id: '12',
       uuid: 'c904171f-5d3f-4b37-ad34-2b179fb8eda5',
-      channelName: 'sofia/internal/0000000000@172.31.2.115',
+      channelName: 'sofia/internal/0000000000@127.0.0.1',
       joinedAt: '1594884345076393',
       leftAt: ''
     },
     '13': ConferenceMember {
       id: '13',
       uuid: 'f1ccd10c-8048-4b2e-954b-02b089277c0c',
-      channelName: 'sofia/internal/0000000000@172.31.2.115',
+      channelName: 'sofia/internal/0000000000@127.0.0.1',
       joinedAt: '1594884352316894',
       leftAt: ''
     }
@@ -250,14 +250,14 @@ Member del:  Conference {
     '12': ConferenceMember {
       id: '12',
       uuid: 'c904171f-5d3f-4b37-ad34-2b179fb8eda5',
-      channelName: 'sofia/internal/0000000000@172.31.2.115',
+      channelName: 'sofia/internal/0000000000@127.0.0.1',
       joinedAt: '1594884345076393',
       leftAt: ''
     },
     '13': ConferenceMember {
       id: '13',
       uuid: 'f1ccd10c-8048-4b2e-954b-02b089277c0c',
-      channelName: 'sofia/internal/0000000000@172.31.2.115',
+      channelName: 'sofia/internal/0000000000@127.0.0.1',
       joinedAt: '1594884352316894',
       leftAt: '1594884358439043'
     }
@@ -272,14 +272,14 @@ Member del:  Conference {
     '12': ConferenceMember {
       id: '12',
       uuid: 'c904171f-5d3f-4b37-ad34-2b179fb8eda5',
-      channelName: 'sofia/internal/0000000000@172.31.2.115',
+      channelName: 'sofia/internal/0000000000@127.0.0.1',
       joinedAt: '1594884345076393',
       leftAt: '1594884364396466'
     },
     '13': ConferenceMember {
       id: '13',
       uuid: 'f1ccd10c-8048-4b2e-954b-02b089277c0c',
-      channelName: 'sofia/internal/0000000000@172.31.2.115',
+      channelName: 'sofia/internal/0000000000@127.0.0.1',
       joinedAt: '1594884352316894',
       leftAt: '1594884358439043'
     }
@@ -294,14 +294,14 @@ Destroyed:  Conference {
     '12': ConferenceMember {
       id: '12',
       uuid: 'c904171f-5d3f-4b37-ad34-2b179fb8eda5',
-      channelName: 'sofia/internal/0000000000@172.31.2.115',
+      channelName: 'sofia/internal/0000000000@127.0.0.1',
       joinedAt: '1594884345076393',
       leftAt: '1594884364396466'
     },
     '13': ConferenceMember {
       id: '13',
       uuid: 'f1ccd10c-8048-4b2e-954b-02b089277c0c',
-      channelName: 'sofia/internal/0000000000@172.31.2.115',
+      channelName: 'sofia/internal/0000000000@127.0.0.1',
       joinedAt: '1594884352316894',
       leftAt: '1594884358439043'
     }

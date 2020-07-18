@@ -3,9 +3,15 @@ import { ESLResponse } from './interfaces';
 class EventParser {
 
     parseJSONEvent(body: string) {
-        const json = JSON.parse(body);
-        const name = json['Event-Name'] === 'CUSTOM' ? `${json['Event-Name']} ${json['Event-Subclass']}`: json['Event-Name']
-        return { name, body: json, isEvent: true };
+        try {
+            const json = JSON.parse(body);
+            const name = json['Event-Name'] === 'CUSTOM' ? `${json['Event-Name']} ${json['Event-Subclass']}`: json['Event-Name']
+            return { name, body: json, isEvent: true };
+        }
+        catch(error) {
+            return this.parseStringEvent(body);
+        }
+
     }
     
     parseStringCommand(body: string, name = '') {

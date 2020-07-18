@@ -127,26 +127,28 @@ class ESL extends EventEmitter {
 
     private setSocketListeners(){
         this.connection.socket.on('data', (data: Buffer) => {
-            this.buffer.getResponses(data).forEach(response => {
-                const parsedResponse = this.eventParser.parseResponse(response);
-                if (parsedResponse) {
-                    if (parsedResponse.isEvent) {
-                        setImmediate(() => { 
-                            this.emitAllEvent(parsedResponse.name, parsedResponse.body);
-                            this.emit(`${parsedResponse.name}`, parsedResponse.body);
-                        })
-                    }
-                    else { this.resolveNext(parsedResponse.body); }
-                }
-            });
+            this.onData(data);
         });
-
         this.connection.socket.on('close', () => {
             if (this.reconnectOnFailure) {
                 this.reconnect();
             }            
         });
+    }
 
+    public onData(data: Buffer) {
+        this.buffer.getResponses(data).forEach(response => {
+            const parsedResponse = this.eventParser.parseResponse(response);
+            if (parsedResponse) {
+                if (parsedResponse.isEvent) {
+                    setImmediate(() => { 
+                        this.emitAllEvent(parsedResponse.name, parsedResponse.body);
+                        this.emit(`${parsedResponse.name}`, parsedResponse.body);
+                    })
+                }
+                else { this.resolveNext(parsedResponse.body); }
+            }
+        });
     }
 
     private reconnect() {
