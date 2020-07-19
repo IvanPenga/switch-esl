@@ -10,7 +10,7 @@
     "lint": "eslint . --ext .ts"
   },
   "author": "Ivan Penga",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/mocha": "^8.0.0",
