@@ -12,6 +12,7 @@ import APICallcenter from './api/callcenter/APICallcenter';
 import APIConference from './api/conference/APIConference';
 
 import Session from './objects/Session';
+import APIShout from './api/shout/APIShout';
 
 class ESL extends EventEmitter {
 
@@ -33,8 +34,10 @@ class ESL extends EventEmitter {
     private reconnectInterval = 5000;
     private reconnectOnFailure = false;
 
+    shout = APIShout(this.api.bind(this));
     callcenter = APICallcenter(this.api.bind(this));
     conference = APIConference(this.api.bind(this), this.addEventListener.bind(this));
+    
 
     private channelEvents = [
         'CHANNEL_ANSWER',

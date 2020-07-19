@@ -46,8 +46,8 @@ describe('Event Parser', () => {
         });
 
         setImmediate(() => {
-            expect(answerCount).to.equal(2);
-            expect(destroyCount).to.equal(4, "asdasdsd");
+            expect(answerCount).to.equal(2, 'Answer channels count shoud be 2');
+            expect(destroyCount).to.equal(4,'Destroy channels count should be 4');
         })
     })
 });
