@@ -6,6 +6,7 @@ import Events from './data/events';
 import { stream } from './data/stream';
 import { expect, assert } from 'chai';
 import { getRandomChunks, getRandomNumber } from './utils';
+import { ConnectionState } from '../src/enums';
 
 const eventParser = new EventParser();
 const buffer = new ESLBuffer();
@@ -49,5 +50,28 @@ describe('Event Parser', () => {
             expect(answerCount).to.equal(2, 'Answer channels count shoud be 2');
             expect(destroyCount).to.equal(4,'Destroy channels count should be 4');
         })
+    })
+    it('API on Data stream', () => {
+        esl.connection.connectionState = ConnectionState.Connected;
+
+        const randomChunks = getRandomChunks(stream);
+        expect(randomChunks.join('')).to.equal(stream);
+
+        esl.api('auth ClueCon').then(result => {
+            expect(result).to.equal('+OK accepted');
+        });
+
+        esl.addEventListener('CHANNEL_ANSWER', () => {});
+        esl.addEventListener('CHANNEL_ANSWER', () => {});
+        esl.addEventListener('CHANNEL_ANSWER', () => {});
+        esl.addLogListener('console', () => {});
+
+        esl.api('status').then(result => {
+            expect(result).to.equal('0 total.');
+        });
+        
+        randomChunks.forEach(chunk => {
+            esl.onData(Buffer.alloc(chunk.length, chunk));
+        });
     })
 });
