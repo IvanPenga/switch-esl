@@ -45,5 +45,6 @@
     "event socket",
     "event socket library",
     "esl"
-  ]
+  ],
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" }
 }
