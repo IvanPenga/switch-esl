@@ -1,9 +1,10 @@
 export default (() => {
 
     function getLogger(log: boolean) {
-        return (message: any) => {
-            if (log) console.log(message);
+        if (log) return (...data: any[]) => {
+            if (log) console.log(...data);
         }
+        return () => {};
     }
 
     return {
