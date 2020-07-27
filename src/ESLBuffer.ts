@@ -5,6 +5,7 @@ class ESLBuffer {
     buffer: Buffer;
     chunks: Buffer[] = [];
     chunksTotalLength: number = 0;
+    lastChunckBuffering = false;
 
     constructor(){
         this.buffer = Buffer.alloc(0);
@@ -19,7 +20,7 @@ class ESLBuffer {
         this.chunks.push(data);
         this.chunksTotalLength += data.length;
 
-        if (data.indexOf('\n\n') === -1) return [];
+        if (!this.lastChunckBuffering && data.indexOf('\n\n') === -1) return [];
         this.buffer = Buffer.concat([this.buffer, ...this.chunks], this.chunksTotalLength + this.buffer.length);
 
         this.chunks = [];
@@ -60,13 +61,13 @@ class ESLBuffer {
             });
             if (response.headers['Content-Length']) {
                 const body = buffer.slice(endOfResponse + 2).toString();
-
                 if (response.headers['Content-Length'] <= body.length) {
                     response.body = body.slice(0, response.headers['Content-Length']);
                     response.length += response.body.length;
                 }
                 else {
                     response.buffering = true;
+                    this.lastChunckBuffering = true;
                 }
             }
         }
@@ -77,6 +78,7 @@ class ESLBuffer {
         const response = this.parseBuffer(this.buffer);
         if (response && response.length > 2 && !response.buffering) {
             this.buffer = this.buffer.slice(response.length);
+            this.lastChunckBuffering = false;
             return response;
         } 
     }
