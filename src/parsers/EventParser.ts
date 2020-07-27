@@ -1,4 +1,4 @@
-import { ESLResponse } from './interfaces';
+import { ESLResponse } from '../interfaces';
 
 class EventParser {
 

@@ -7,13 +7,14 @@ import { loglevel } from './types';
 import utils from './utils';
 import * as events from './events';
 
-import EventParser from './EventParser';
+import EventParser from './parsers/EventParser';
 import APICallcenter from './api/callcenter/APICallcenter';
 import APIConference from './api/conference/APIConference';
 
 import Session from './objects/Session';
 import APIShout from './api/shout/APIShout';
-
+import SipParser from './parsers/SipParser';
+import SipMessage from './objects/SipMessage';
 class ESL extends EventEmitter {
 
     connection: Connection;
@@ -22,6 +23,7 @@ class ESL extends EventEmitter {
     callbackQueue: any[] = [];
     bgapiQueue:any = {};
     eventParser: EventParser = new EventParser();
+    siptraceParser: SipParser = new SipParser();
 
     commandsOnConnect = new Set<string>();
     currentLoglevel = '';
@@ -508,6 +510,40 @@ class ESL extends EventEmitter {
         this.commandsOnConnect.delete(`filter delete ${key} ${value}`);
     }
 
+    /**
+     * Enables sofia SIP trace. This method will enable log listener with tracelevel as loglevel.  
+     * @param tracelevel Sofia SIP trace level
+     * @param parse Flag to return plain SIP trace (string)
+     * @param callback Callback on any SIP message
+     */
+    addSipTraceListener(tracelevel: loglevel, parse: false, callback: (log: string) => void): void;
+
+    /**
+     * Enables sofia SIP trace. This method will enable log listener with tracelevel as loglevel.  
+     * @param tracelevel Sofia SIP trace level
+     * @param parse Flag to return parsed SIP trace (object)
+     * @param callback Callback on any SIP message
+     */
+    addSipTraceListener(tracelevel: loglevel, parse: true,  callback: (log: SipMessage) => void): void;
+
+    async addSipTraceListener(tracelevel: loglevel, parse: boolean, callback: (log: any) => void) {
+
+        const cb = parse ? 
+            (log: string) => { callback(this.siptraceParser.parse(log)); } : 
+            (log: string) => { callback(log); };
+
+        try {
+            await this.api(`sofia tracelevel ${tracelevel}`);
+            this.addLogListener(tracelevel, (log) => {
+                if (RegExp(/^(recv|send) \d+ bytes (from|to)/).test(log)) {
+                    cb(log);
+                }
+            });
+        }
+        catch(error) {
+            this.logger(`Unable to set sofia tracelevel to ${tracelevel}`, error);
+        }
+    }
 
 }
 
