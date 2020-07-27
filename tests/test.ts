@@ -1,9 +1,12 @@
-import EventParser from '../src/EventParser';
+import EventParser from '../src/parsers/EventParser';
 import ESLBuffer from '../src/ESLBuffer';
 import ESL from '../src/ESL';
 
 import Events from './data/events';
 import { stream } from './data/stream';
+import { siptrace } from './data/siptrace';
+import SipParser from './../src/parsers/SipParser';
+
 import { expect, assert } from 'chai';
 import { getRandomChunks, getRandomNumber } from './utils';
 import { ConnectionState } from '../src/enums';
@@ -74,4 +77,41 @@ describe('Event Parser', () => {
             esl.onData(Buffer.alloc(chunk.length, chunk));
         });
     })
+    it('SIP trace', () => {
+        esl.connection.connectionState = ConnectionState.Connected;
+
+        const randomChunks = getRandomChunks(siptrace);
+        expect(randomChunks.join('')).to.equal(siptrace);
+
+        esl.api('auth ClueCon').then(result => {
+            expect(result).to.equal('+OK accepted');
+        });
+
+        const sipParser = new SipParser();
+
+        let sipMessages: {message:string,direction:string}[] = [];
+        esl.addSipTraceListener('info', false, (siptrace) => {
+            const siptraceResult = sipParser.parse(siptrace);
+            expect(siptraceResult).to.not.be.undefined;
+            expect(siptraceResult).to.not.be.null;
+            expect(siptraceResult).to.be.a('object');
+            expect(siptraceResult).to.have.property('direction');
+
+            if (siptraceResult) {
+                expect(siptraceResult.direction).to.be.a('string');
+                expect(siptraceResult.direction).to.match(/(recv|send)/);
+                sipMessages.push(siptraceResult);
+            }
+            
+        });
+
+        randomChunks.forEach(chunk => {
+            esl.onData(Buffer.alloc(chunk.length, chunk));
+        });
+
+        setImmediate(() => {
+            expect(sipMessages.length).to.equal(7);
+        })
+        
+    });
 });
