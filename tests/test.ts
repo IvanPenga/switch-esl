@@ -25,7 +25,7 @@ describe('Event Parser', () => {
         const badUnknownHeader = eventParser.parseResponse(Events.badUnknownHeader);
     })
     it('Parse ESL stream', () => {
-        const responses = buffer.getResponses(Buffer.alloc(stream.length, stream));
+        const responses = buffer.getResponses(Buffer.alloc(Buffer.byteLength(stream), stream));
         expect(responses.length).to.equal(20);
     })
     it('ESL on Data stream', () => {
@@ -46,12 +46,12 @@ describe('Event Parser', () => {
         });
 
         randomChunks.forEach(chunk => {
-            esl.onData(Buffer.alloc(chunk.length, chunk));
+            esl.onData(Buffer.alloc(Buffer.byteLength(chunk), chunk));
         });
 
         setImmediate(() => {
-            expect(answerCount).to.equal(2, 'Answer channels count shoud be 2');
-            expect(destroyCount).to.equal(4,'Destroy channels count should be 4');
+          expect(answerCount).to.equal(2, 'Answer channels count shoud be 2');
+          expect(destroyCount).to.equal(4,'Destroy channels count should be 4');
         })
     })
     it('API on Data stream', () => {
@@ -106,7 +106,7 @@ describe('Event Parser', () => {
         });
 
         randomChunks.forEach(chunk => {
-            esl.onData(Buffer.alloc(chunk.length, chunk));
+            esl.onData(Buffer.alloc(Buffer.byteLength(chunk), chunk));
         });
 
         setImmediate(() => {

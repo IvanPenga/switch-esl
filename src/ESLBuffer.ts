@@ -34,15 +34,15 @@ class ESLBuffer {
         }
         return responses;
     }
-    
-    parseBuffer(buffer: Buffer) {
 
-        const endOfResponse = buffer.indexOf('\n\n');
+    parseBuffer() {
+
+        const endOfResponse = this.buffer.indexOf('\n\n');
         if (endOfResponse === -1) {
             return undefined;
         }
 
-        const rawHeaders = buffer.slice(0, endOfResponse).toString();
+        const rawHeaders = this.buffer.slice(0, endOfResponse).toString();
 
         const response: ESLResponse = {  
             headers: { 
@@ -60,10 +60,10 @@ class ESLBuffer {
                 response.headers[header.slice(0, index)] = header.slice(index + 2);
             });
             if (response.headers['Content-Length']) {
-                const body = buffer.slice(endOfResponse + 2).toString();
-                if (response.headers['Content-Length'] <= body.length) {
+                const body = this.buffer.slice(endOfResponse + 2).toString();
+                if (response.headers['Content-Length'] <= Buffer.byteLength(body, 'utf-8')) {
                     response.body = body.slice(0, response.headers['Content-Length']);
-                    response.length += response.body.length;
+                    response.length += Buffer.byteLength(response.body, 'utf-8');
                 }
                 else {
                     response.buffering = true;
@@ -75,7 +75,7 @@ class ESLBuffer {
     }
 
     getNextResponse() {
-        const response = this.parseBuffer(this.buffer);
+        const response = this.parseBuffer();
         if (response && response.length > 2 && !response.buffering) {
             this.buffer = this.buffer.slice(response.length);
             this.lastChunckBuffering = false;
