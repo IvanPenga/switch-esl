@@ -78,6 +78,9 @@ eslClient.connect()
 //Subscribes to all events
 eslClient.addEventListener('ALL', (event) => {});
 
+//Subscribes to custom sofia register event
+eslClient.addEventListener('CUSTOM sofia::register', (event) => {});
+
 //Subscribes to CHANNLE_ANSWER and CHANNEL_DESTROY events
 eslClient.addEventListener(['CHANNEL_ANSWER', 'CHANNEL_DESTROY'], (event) => {});
 
