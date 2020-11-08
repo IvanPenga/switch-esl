@@ -68,6 +68,14 @@ eslClient.connect()
     .catch(error => {
         console.log(error);
     })
+
+eslClient.disconnect()
+  .then(result => {
+
+  })
+  .catch(error => {
+    
+  })
 ```
 
 ## More examples
