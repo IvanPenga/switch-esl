@@ -6,7 +6,8 @@
   "types": "./lib/index.d.ts",
   "scripts": {
     "build": "npm test && tsc",
-    "test": "mocha -r ts-node/register 'tests/**/*.ts'",
+    "test": "mocha -r ts-node/register 'tests/test.ts'",
+    "livetest": "mocha -r ts-node/register 'tests/liveTest.ts'",
     "lint": "eslint . --ext .ts"
   },
   "author": "Ivan Penga",
