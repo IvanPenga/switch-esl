@@ -15,6 +15,7 @@ import Session from './objects/Session';
 import APIShout from './api/shout/APIShout';
 import SipParser from './parsers/SipParser';
 import SipMessage from './objects/SipMessage';
+
 class ESL extends EventEmitter {
 
     connection: Connection;
@@ -41,7 +42,6 @@ class ESL extends EventEmitter {
     callcenter = APICallcenter(this.api.bind(this));
     conference = APIConference(this.api.bind(this), this.addEventListener.bind(this));
     
-
     private channelEvents = [
         'CHANNEL_ANSWER',
         'CHANNEL_APPLICATION',
@@ -165,8 +165,7 @@ class ESL extends EventEmitter {
                 this.logger('Reconnecting...');
                 this.connect()
                     .then(() => { this.failedReconnectAttempts = 0; })
-                    .catch(e => { this.failedReconnectAttempts++; this.logger('Unable to connect.');                
-                });
+                    .catch(e => { this.failedReconnectAttempts++; this.logger('Unable to connect.', e);  });
             }, this.reconnectInterval);
         }
     }
@@ -177,12 +176,12 @@ class ESL extends EventEmitter {
         });
     }
 
-    send(command: string, parser?: (result: string) => { }){
+    send(command: string, parser?: (result: string) => void){
         this.connection.send(command);
         return this.promise<string>(parser);
     }
 
-    api(command: string, parser?: (result: string) => { }) {
+    api(command: string, parser?: (result: string) => void) {
         return this.send(`api ${command}`, parser);
     }
 
@@ -213,7 +212,7 @@ class ESL extends EventEmitter {
         })
     }
 
-    private promise<T>(parser?: (result: string) => { }) {
+    private promise<T>(parser?: (result: string) => void) {
         return new Promise<T>((resolve, reject) => {
             if (!this.connection.isOpen()) { reject('Connection is closed'); }
             else { this.callbackQueue.push({ resolve, reject, parser }); }

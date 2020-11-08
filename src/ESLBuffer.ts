@@ -4,7 +4,7 @@ class ESLBuffer {
 
     buffer: Buffer;
     chunks: Buffer[] = [];
-    chunksTotalLength: number = 0;
+    chunksTotalLength = 0;
     lastChunckBuffering = false;
 
     constructor(){

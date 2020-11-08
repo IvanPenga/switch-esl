@@ -89,7 +89,7 @@ describe('Event Parser', () => {
 
         const sipParser = new SipParser();
 
-        let sipMessages: {message:string,direction:string}[] = [];
+        const sipMessages: {message:string,direction:string}[] = [];
         esl.addSipTraceListener('info', false, (siptrace) => {
             const siptraceResult = sipParser.parse(siptrace);
             expect(siptraceResult).to.not.be.undefined;

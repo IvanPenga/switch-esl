@@ -17,7 +17,7 @@ class SipParser {
         if (!body) return { };
         const [ method, uri ] = body[0].split(' ');
 
-        let response: any = { };
+        const response: any = { };
         for (let i = 1; i < body.length; i++) {
             const delimiter = body[i].indexOf(': ');
             if (delimiter !== -1) {
@@ -34,7 +34,7 @@ class SipParser {
         const [ _, protocol, code, message ] = RegExp(`(.*) (\\d+) (.*)`).exec(body[0]) || [];
         if (!code && !message) return {  };
 
-        let response: any = { };
+        const response: any = { };
         for (let i = 1; i < body.length; i++) {
             const delimiter = body[i].indexOf(': ');
             if (delimiter !== -1) {
