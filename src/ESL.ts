@@ -27,6 +27,7 @@ class ESL extends EventEmitter {
 
     commandsOnConnect = new Set<string>();
     currentLoglevel = '';
+    forceDisconnecting = false;
 
     connectOptions: ConnectOptions;
     logger = utils.getLogger(false);
@@ -135,9 +136,10 @@ class ESL extends EventEmitter {
             this.onData(data);
         });
         this.connection.socket.on('close', () => {
-            if (this.reconnectOnFailure) {
+            if (this.reconnectOnFailure && !this.forceDisconnecting) {
                 this.reconnect();
-            }            
+            }
+            this.forceDisconnecting = false;            
         });
     }
 
@@ -229,6 +231,19 @@ class ESL extends EventEmitter {
         }
         catch(error) {
             throw new Error(error);
+        }
+    }
+
+    async disconnect() {
+        this.logger('Disconnecting...');
+        try {
+            this.forceDisconnecting = true;
+            const result = await this.send('exit');
+            this.connection.socket.end();
+            return result;
+        }
+        catch(error) {
+            throw error;
         }
     }
 
