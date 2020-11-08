@@ -235,15 +235,20 @@ class ESL extends EventEmitter {
 
     async disconnect() {
         this.logger('Disconnecting...');
-        try {
-            this.forceDisconnecting = true;
-            const result = await this.send('exit');
-            this.connection.socket.end();
-            return result;
-        }
-        catch(error) {
-            throw error;
-        }
+        this.forceDisconnecting = true;
+
+        return new Promise(async (resolve, reject) => {
+            this.send('exit')
+                .then(result => {
+                    this.connection.socket.on('close', () => { 
+                        resolve(result);
+                    });
+                    this.connection.socket.destroy();
+                })
+                .catch(error => {
+                    reject(error);
+                })
+        });
     }
 
     private async authenticate() {
